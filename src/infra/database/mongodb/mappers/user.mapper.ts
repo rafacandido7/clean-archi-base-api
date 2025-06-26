@@ -1,27 +1,30 @@
 import { UserDocument } from '../schemas/user.schema'
-import { User } from '@core/entities/user.entity'
+import { User } from '../../../../domain/entities'
 
 export class UserMapper {
   static toEntity(document: UserDocument): User {
-    return new User(
-      document._id?.toString() || '',
-      document.name,
-      document.email,
-      document.password,
-      document.cpf,
-      document.phone || '',
-      document.createdAt,
-      document.updatedAt,
-    )
+    return User.create({
+      id: document._id?.toString() || '',
+      name: document.name,
+      email: document.email,
+      password: document.password,
+      cpf: document.cpf,
+      phone: document.phone || '',
+      createdAt: document.createdAt,
+      updatedAt: document.updatedAt,
+    })
   }
 
-  static toSchema(entity: Omit<User, '_id' | 'createdAt' | 'updatedAt'>) {
+  static toSchema(entity: User) {
+    const plainObject = entity.toPlainObject()
     return {
-      name: entity.name,
-      email: entity.email,
-      password: entity.password,
-      cpf: entity.cpf,
-      phone: entity.phone,
+      name: plainObject.name,
+      email: plainObject.email,
+      password: plainObject.password,
+      cpf: plainObject.cpf,
+      phone: plainObject.phone,
+      createdAt: plainObject.createdAt,
+      updatedAt: plainObject.updatedAt,
     }
   }
 }

@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
 
 import { CreateUserDto } from '@core/dto/user'
-import { User } from '@core/entities'
+import { User, UserPublicData } from '../../../entities'
 
 import { HashGenerator } from '@domain/sample/cryptography'
-import { UserRepository } from '@domain/sample/repositories'
+import { UserRepository } from '../../../repositories'
 import { UserAlreadyExistsError } from '../errors/user-already-exists.error'
 
 @Injectable()
@@ -16,7 +16,7 @@ export class CreateUserUseCase {
 
   async execute(
     data: CreateUserDto,
-  ): Promise<{ user: Omit<User, 'password'> }> {
+  ): Promise<{ user: UserPublicData }> {
     const [cpfAlreadyExists, emailAlreadyExists] = await Promise.all([
       this.userRepository.findByCPF(data.cpf),
       this.userRepository.findByEmail(data.email),
@@ -37,8 +37,6 @@ export class CreateUserUseCase {
       password: hashedPassword,
     })
 
-    const { password, ...userData } = user
-
-    return { user: userData }
+    return { user: user.toPublic() }
   }
 }

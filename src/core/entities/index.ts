@@ -1,1 +1,2 @@
-export * from './user.entity'
+// Mantendo compatibilidade com imports antigos
+export * from '../../domain/entities'
